@@ -4,6 +4,7 @@ const getTestCases = require('./helpers/GetTestCases')
 const getCodeTemplate = require('./helpers/GetCodeTemplate')
 const createCodeToRun = require('./helpers/CreateCodeToRun')
 const getContainerLogs = require('./helpers/GetContainerLogs')
+const fs = require('fs');
 // const userCode = `
 // var twoSum = function(nums, target) {
 //   let map = new Map();
@@ -18,10 +19,10 @@ const getContainerLogs = require('./helpers/GetContainerLogs')
 
 
 
-// const userCode = `
+// const cppCode = `
 // vector<int> twoSum(vector<int>& nums, int target) {
 //     unordered_map<int, int> numMap;
-//     int n = nums.size()
+//     int n = nums.size();
 
 //     for (int i = 0; i < n; i++) {
 //         numMap[nums[i]] = i;
@@ -38,9 +39,9 @@ const getContainerLogs = require('./helpers/GetContainerLogs')
 // }
 // `
 
-const userCode = `
-a = 5/0
+const pythonCode = `
 def twoSum(nums, target):
+    return 'abc'
     num_to_index = {}
     for i, num in enumerate(nums):
         complement = target - num
@@ -52,12 +53,24 @@ def twoSum(nums, target):
 
 async function runContainer(taskID, languageID, userCode) {
   const languageObj = languageConfig[languageID];
-  const testCases = await getTestCases(taskID);
-  const codeTemplate = await getCodeTemplate(taskID, languageID);
+  const [testCases, codeTemplate] = await Promise.all([
+    getTestCases(taskID),
+    getCodeTemplate(taskID, languageID)
+  ]);
   const codeToRun = createCodeToRun(testCases, codeTemplate, userCode);
   const filePath = await createTempFile(codeToRun, languageObj.extension)
   const container = await languageObj.createContainer(filePath);
-  const result = await getContainerLogs(container);
-  console.log(result);
+  const resultObject = await getContainerLogs(container);
+  fs.unlinkSync(filePath);
+  if (resultObject.success) {
+    const wrongAnsIndex = resultObject.result.findIndex((res) => !res.status);
+    if (wrongAnsIndex >= 0) {
+      // отдаем ошибку
+      console.log('WA', resultObject.result[wrongAnsIndex]);
+    } else {
+      // говорим что все хорошо
+      console.log('Correct');
+    }
+  }
 }
-runContainer(1, 2, userCode);
+runContainer(1, 2, pythonCode);

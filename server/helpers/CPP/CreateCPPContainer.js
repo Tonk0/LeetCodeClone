@@ -8,7 +8,7 @@ async function createCPPContainer(filePath) {
     Image: 'gcc-with-json',
     Cmd: [
       'bash', '-c',
-      `g++ -I/usr/include -o /app/userCode/code /app/userCode/${fileName} && /app/userCode/code`
+      `g++ -I/usr/include -o /app/userCode/code /app/userCode/${fileName} && /app/userCode/code || echo "COMPILATION ERROR"`
     ],
     AttachStdout: true,
     AttachStderr: true,

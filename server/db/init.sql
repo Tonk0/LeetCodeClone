@@ -200,9 +200,6 @@ using namespace std;
 
 {user_code}
 
-void infinite() {
-    infinite();  // Runtime Error: stack overflow
-}
 
 bool compareOutputs(const vector<int>& output, const vector<int>& expected) {
     if (output.size() != expected.size()) return false;
@@ -231,8 +228,6 @@ json run_test_case(const json& test_case) {
 }
 
 int main() {
-    infinite();
-
     string input_json = R"({test_cases})";
     
     json test_cases = json::parse(input_json);
