@@ -24,5 +24,10 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    'import/extensions' : ['error',
+      this.ignorePatterns, {
+        tsx: 'never',
+      }
+    ]
   },
 }
