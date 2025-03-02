@@ -42,29 +42,6 @@ async function getContainerLogs(container) {
     success: true,
     result
   }
-  // const res = await container.wait();
-  // // if (res.StatusCode !== 0) {
-  // //   return {
-  // //     success: false,
-  // //     error: errData
-  // //   }
-  // // }
-  // console.log(res.StatusCode)
-  // console.log('UserRes:')
-  // console.log(userCodeRes);
-  // console.log('ErrorRes:')
-  // console.log(errData);
-  // if (errData.length > 0) {
-  //   return {
-  //     success: false,
-  //     error: errData
-  //   }
-  // }
-
-  // return {
-  //   success: true,
-  //   result
-  // }
 }
 
 module.exports = getContainerLogs;
