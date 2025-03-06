@@ -48,8 +48,20 @@ const login = async (req, res) => {
   res.cookie('token', token, JWT_COOKIE_CONFiG)
   res.status(200).json({message: 'OK'});
 }
-
+const check = async (req, res) => {
+  const { token } = req.cookies;
+  if (!token) {
+    return res.status(401).json({message: 'Отсутствуют cookie'});
+  }
+  jwt.verify(token, JWT_SECRET, (err) => {
+    if(err) {
+      return res.status(401).json({message: 'Неверный jwt'});
+    }
+  })
+  res.status(200).json({message: 'OK'});
+}
 module.exports = {
   register,
-  login
+  login, 
+  check
 }
