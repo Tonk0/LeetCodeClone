@@ -24,3 +24,13 @@ export const fetchAuth = async <T>(endpoint: string, data: T) => {
   }
   return response.json();
 }
+export const verifyAuth = async () => {
+  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/check`, {
+    method: 'GET',
+    credentials: 'include'
+  });
+  if (!response.ok) {
+    throw new Error('Не авторизован');
+  }
+  return 'Успешно';
+}
