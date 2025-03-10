@@ -13,7 +13,12 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
+import { Route as LayoutImport } from './routes/_layout'
 import { Route as IndexImport } from './routes/index'
+import { Route as SubmissionsIdImport } from './routes/submissions/$id'
+import { Route as ProblemsIdImport } from './routes/problems/$id'
+import { Route as LayoutSubmissionsImport } from './routes/_layout.submissions'
+import { Route as LayoutProblemsImport } from './routes/_layout.problems'
 
 // Create/Update Routes
 
@@ -29,10 +34,39 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const LayoutRoute = LayoutImport.update({
+  id: '/_layout',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const SubmissionsIdRoute = SubmissionsIdImport.update({
+  id: '/submissions/$id',
+  path: '/submissions/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ProblemsIdRoute = ProblemsIdImport.update({
+  id: '/problems/$id',
+  path: '/problems/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LayoutSubmissionsRoute = LayoutSubmissionsImport.update({
+  id: '/submissions',
+  path: '/submissions',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutProblemsRoute = LayoutProblemsImport.update({
+  id: '/problems',
+  path: '/problems',
+  getParentRoute: () => LayoutRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -44,6 +78,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_layout': {
+      id: '/_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof LayoutImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -60,49 +101,136 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
+    '/_layout/problems': {
+      id: '/_layout/problems'
+      path: '/problems'
+      fullPath: '/problems'
+      preLoaderRoute: typeof LayoutProblemsImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/submissions': {
+      id: '/_layout/submissions'
+      path: '/submissions'
+      fullPath: '/submissions'
+      preLoaderRoute: typeof LayoutSubmissionsImport
+      parentRoute: typeof LayoutImport
+    }
+    '/problems/$id': {
+      id: '/problems/$id'
+      path: '/problems/$id'
+      fullPath: '/problems/$id'
+      preLoaderRoute: typeof ProblemsIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/submissions/$id': {
+      id: '/submissions/$id'
+      path: '/submissions/$id'
+      fullPath: '/submissions/$id'
+      preLoaderRoute: typeof SubmissionsIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
 // Create and export the route tree
 
+interface LayoutRouteChildren {
+  LayoutProblemsRoute: typeof LayoutProblemsRoute
+  LayoutSubmissionsRoute: typeof LayoutSubmissionsRoute
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutProblemsRoute: LayoutProblemsRoute,
+  LayoutSubmissionsRoute: LayoutSubmissionsRoute,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '': typeof LayoutRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/problems': typeof LayoutProblemsRoute
+  '/submissions': typeof LayoutSubmissionsRoute
+  '/problems/$id': typeof ProblemsIdRoute
+  '/submissions/$id': typeof SubmissionsIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '': typeof LayoutRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/problems': typeof LayoutProblemsRoute
+  '/submissions': typeof LayoutSubmissionsRoute
+  '/problems/$id': typeof ProblemsIdRoute
+  '/submissions/$id': typeof SubmissionsIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/_layout': typeof LayoutRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/_layout/problems': typeof LayoutProblemsRoute
+  '/_layout/submissions': typeof LayoutSubmissionsRoute
+  '/problems/$id': typeof ProblemsIdRoute
+  '/submissions/$id': typeof SubmissionsIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register'
+  fullPaths:
+    | '/'
+    | ''
+    | '/login'
+    | '/register'
+    | '/problems'
+    | '/submissions'
+    | '/problems/$id'
+    | '/submissions/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register'
-  id: '__root__' | '/' | '/login' | '/register'
+  to:
+    | '/'
+    | ''
+    | '/login'
+    | '/register'
+    | '/problems'
+    | '/submissions'
+    | '/problems/$id'
+    | '/submissions/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/_layout'
+    | '/login'
+    | '/register'
+    | '/_layout/problems'
+    | '/_layout/submissions'
+    | '/problems/$id'
+    | '/submissions/$id'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LayoutRoute: typeof LayoutRouteWithChildren
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  ProblemsIdRoute: typeof ProblemsIdRoute
+  SubmissionsIdRoute: typeof SubmissionsIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LayoutRoute: LayoutRouteWithChildren,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  ProblemsIdRoute: ProblemsIdRoute,
+  SubmissionsIdRoute: SubmissionsIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -116,18 +244,42 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/_layout",
         "/login",
-        "/register"
+        "/register",
+        "/problems/$id",
+        "/submissions/$id"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/_layout": {
+      "filePath": "_layout.tsx",
+      "children": [
+        "/_layout/problems",
+        "/_layout/submissions"
+      ]
     },
     "/login": {
       "filePath": "login.tsx"
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/_layout/problems": {
+      "filePath": "_layout.problems.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/submissions": {
+      "filePath": "_layout.submissions.tsx",
+      "parent": "/_layout"
+    },
+    "/problems/$id": {
+      "filePath": "problems/$id.tsx"
+    },
+    "/submissions/$id": {
+      "filePath": "submissions/$id.tsx"
     }
   }
 }

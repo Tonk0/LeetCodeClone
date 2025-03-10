@@ -1,4 +1,4 @@
-import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react"
+import { createSystem, defaultConfig, defineConfig } from '@chakra-ui/react';
 
 const config = defineConfig({
   theme: {
@@ -6,12 +6,12 @@ const config = defineConfig({
       colors: {
         bg: {
           DEFAULT: {
-            value: { _light: "{colors.white}", _dark: "#141414" }, // Custom dark background
+            value: { _light: '{colors.white}', _dark: '#141414' }, // Custom dark background
           },
         },
         border: {
           DEFAULT: {
-            value: { _light: "{colors.gray.200}", _dark: "#404040" }, // Custom dark border
+            value: { _light: '{colors.gray.200}', _dark: '#404040' }, // Custom dark border
           },
         },
       },
@@ -19,10 +19,10 @@ const config = defineConfig({
   },
   globalCss: {
     '*::selection': {
-      bg: "blue.300",
-      color: 'black'
-    }
-  }
-})
+      bg: 'blue.300',
+      color: 'black',
+    },
+  },
+});
 
-export const system = createSystem(defaultConfig, config)
+export const system = createSystem(defaultConfig, config);

@@ -1,9 +1,9 @@
-export interface regData {
+export interface RegData {
   login: string;
   email: string;
   password: string;
 }
-export interface logData {
+export interface LogData {
   login: string;
   password: string;
 }
@@ -12,25 +12,25 @@ export const fetchAuth = async <T>(endpoint: string, data: T) => {
   const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/${endpoint}`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
-    credentials: 'include'
+    credentials: 'include',
   });
 
   if (!response.ok) {
-    const errData = await response.json().catch(() => ({message: 'Неизвестная ошибка'}));
+    const errData = await response.json().catch(() => ({ message: 'Неизвестная ошибка' }));
     throw new Error(errData.message);
   }
   return response.json();
-}
+};
 export const verifyAuth = async () => {
   const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/check`, {
     method: 'GET',
-    credentials: 'include'
+    credentials: 'include',
   });
   if (!response.ok) {
     throw new Error('Не авторизован');
   }
   return 'Успешно';
-}
+};

@@ -1,28 +1,32 @@
-import { verifyAuth } from "@/helpers/api";
-import { useQuery } from "@tanstack/react-query";
-import { ReactNode } from "@tanstack/react-router";
-import { createContext, FC, useEffect, useState } from "react";
+import { useQuery } from '@tanstack/react-query';
+import { ReactNode } from '@tanstack/react-router';
+import {
+  createContext, FC, useEffect, useMemo, useState,
+} from 'react';
+import { verifyAuth } from '@/helpers/api';
 
-interface AuthContext {
+interface IAuthContext {
   isAuth: boolean;
   setIsAuth: (isAuth: boolean) => void;
 }
 
-export const AuthContext = createContext<AuthContext>({isAuth: false, setIsAuth: () => {}});
+export const AuthContext = createContext<IAuthContext>({ isAuth: false, setIsAuth: () => {} });
 
-const AuthProvider:FC<{children: ReactNode}> = ({children}) => {
+// eslint-disable-next-line react/function-component-definition
+const AuthProvider:FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuth, setIsAuth] = useState<boolean>(false);
-  const {isSuccess} = useQuery({queryKey: ['auth'], queryFn: verifyAuth, retry: false})
+  const { isSuccess } = useQuery({ queryKey: ['auth'], queryFn: verifyAuth, retry: false });
   useEffect(() => {
     if (isSuccess) {
       setIsAuth(true);
     }
-  }, [isSuccess])
+  }, [isSuccess]);
+  const contextObj = useMemo(() => ({ isAuth, setIsAuth }), [isAuth]);
   return (
-    <AuthContext.Provider value={{isAuth, setIsAuth}}>
+    <AuthContext.Provider value={contextObj}>
       {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
 
 export default AuthProvider;

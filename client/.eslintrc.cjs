@@ -24,9 +24,13 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
-    'import/extensions' : ['error',
-      this.ignorePatterns, {
-        tsx: 'never',
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        '': 'never',
+        'ts': 'never',
+        'tsx': 'never'
       }
     ]
   },
