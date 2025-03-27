@@ -32,13 +32,11 @@ function PageSelector() {
   }, [router.location.pathname]);
 
   useEffect(() => {
-    if (page !== 1) {
-      navigate({
-        from: router.location.pathname as '/problems' | '/submissions',
-        search: (prev) => ({ ...prev, page }),
-        replace: true,
-      });
-    }
+    navigate({
+      from: router.location.pathname as '/problems' | '/submissions',
+      search: (prev) => ({ ...prev, page }),
+      replace: true,
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, navigate]);
   return (
