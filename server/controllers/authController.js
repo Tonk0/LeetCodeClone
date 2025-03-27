@@ -1,14 +1,9 @@
 const query = require("../db/db");
 const jwt = require('jsonwebtoken');
-const JWT_COOKIE_CONFiG = {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'Strict',
-  maxAge: 3*24*60*60*1000
-}
-const JWT_SECRET = process.env.JWT_KEY || 'your_jwt_key';
-const JWT_EXPIRES_IN = '3d';
+const jwtConfig = require('../jwtConfig');
+
 const register = async (req, res) => {
+  console.log(jwtConfig.JWT_EXPIRES_IN)
   const {login, email, password} = req.body;
   const isLoginExists = (await query('SELECT * FROM Users WHERE username = $1', [login])).rowCount > 0;
   if (isLoginExists) {
@@ -24,11 +19,11 @@ const register = async (req, res) => {
   // create jwt 
   const token = jwt.sign(
     {login, email},
-    JWT_SECRET,
-    {expiresIn: JWT_EXPIRES_IN}
+    jwtConfig.JWT_SECRET,
+    {expiresIn: jwtConfig.JWT_EXPIRES_IN}
   )
   // set cookies in res
-  res.cookie('token', token, JWT_COOKIE_CONFiG)
+  res.cookie('token', token, jwtConfig.JWT_COOKIE_CONFiG)
   res.status(201).json({message: 'Пользователь успешно создан'})
 }
 const login = async (req, res) => {
@@ -42,10 +37,10 @@ const login = async (req, res) => {
   }
   const token = jwt.sign(
     {login, email: user.email},
-    JWT_SECRET,
-    {expiresIn: JWT_EXPIRES_IN}
+    jwtConfig.JWT_SECRET,
+    {expiresIn: jwtConfig.JWT_EXPIRES_IN}
   )
-  res.cookie('token', token, JWT_COOKIE_CONFiG)
+  res.cookie('token', token, jwtConfig.JWT_COOKIE_CONFiG)
   res.status(200).json({message: 'OK'});
 }
 const check = async (req, res) => {
@@ -53,7 +48,7 @@ const check = async (req, res) => {
   if (!token) {
     return res.status(401).json({message: 'Отсутствуют cookie'});
   }
-  jwt.verify(token, JWT_SECRET, (err) => {
+  jwt.verify(token, jwtConfig.JWT_SECRET, (err) => {
     if(err) {
       return res.status(401).json({message: 'Неверный jwt'});
     }

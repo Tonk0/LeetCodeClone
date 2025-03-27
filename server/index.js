@@ -3,7 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser')
 const authRoutes = require('./routes/authRoutes')
-
+const problemsRoutes = require('./routes/problemsRoutes')
+const tagsRoutes = require('./routes/tagsRoutes')
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.json());
@@ -15,7 +16,8 @@ app.use(cors({
 }))
 
 app.use('/auth', authRoutes)
-
+app.use('/problems', problemsRoutes)
+app.use('/tags', tagsRoutes)
 app.listen(port || 3000, () => {
   console.log('✅ server is running on ' + port)
 })

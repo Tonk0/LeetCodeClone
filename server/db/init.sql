@@ -297,3 +297,20 @@ $$,
 1,
 2
 );
+
+INSERT INTO Tags (name)
+VALUES
+  ('array'), ('hash table'), ('greedy');
+
+
+INSERT INTO Task_Tags (task_id, tag_id)
+VALUES
+  (1, 1),
+  (1, 2);
+INSERT INTO Users (email, username, pass_hash)
+VALUES
+    ('babaika12@mail.ru', 'Kukyo12', '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2');
+INSERT INTO Submissions (user_id, task_id, status_id, memory_used, execution_time, code, programming_language_id)
+VALUES
+    (1, 1, 2, 1, 1, 'abc', 1),
+    (1, 1, 1, 1, 1, 'cab', 1);
