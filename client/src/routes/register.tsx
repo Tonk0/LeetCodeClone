@@ -39,7 +39,7 @@ function Register() {
     <Flex direction="column" align="center" pt="32">
       <Heading size="2xl">Регистрация</Heading>
       <form onSubmit={(e) => handleSubmit(e)}>
-        <Flex direction="column" width={{ lg: '20vw', base: '50vw' }} gap="4" mt="3" align="center">
+        <Flex direction="column" width={{ lg: '25vw', base: '50vw' }} gap="4" mt="3" align="center">
           <Field label="Логин" required>
             <Input type="text" placeholder="MyLogin" name="login" id="login" />
           </Field>

@@ -1,25 +1,16 @@
-import { Flex, Input } from '@chakra-ui/react';
-import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
-import { LuSearch } from 'react-icons/lu';
-import { InputGroup } from '@/components/ui/input-group';
-import { ColorModeButton } from '@/components/ui/color-mode';
+import { Flex } from '@chakra-ui/react';
+import { createFileRoute, Outlet } from '@tanstack/react-router';
+import Navbar from '@/components/Navbar';
+import PageSelector from '@/components/PageSelector';
 
 function RouteComponent() {
   return (
     <Flex width="100vw" height="100vh" justify="center">
-      <Flex width="50vw" height="100vh" align="center" direction="column" pt="10">
-        <nav>
-          <Flex align="center" gap="5">
-            <InputGroup startElement={<LuSearch />}>
-              <Input placeholder="Поиск" />
-            </InputGroup>
-            <Link to="/problems">Задачи</Link>
-            <Link to="/submissions">Попытки</Link>
-            <ColorModeButton />
-          </Flex>
-        </nav>
+      <Flex width={{ lg: '50vw', base: '60vw' }} height="100vh" align="center" justify="space-between" direction="column" pt="10" pb="10" position="relative" gap="4">
+        <Navbar />
         <Outlet />
         {/* page selector */}
+        <PageSelector />
       </Flex>
     </Flex>
   );
