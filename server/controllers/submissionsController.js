@@ -4,11 +4,12 @@ const getSubmissions = async (req, res) => {
   const { token } = req.cookies;
   const user = await findUserByToken(token);
   if (!user) {
-    return res.status(401).json({message: 'Пользователь не авторизован'})
+    // return res.status(401).json({message: 'Пользователь не авторизован'})
+    return res.status(200).json([]);
   }
   const {search, statuses, page = 1} = req.query;
   const queryString = `
-    SELECT st.name as status, t.title, s.submitted_at FROM Submissions s
+    SELECT s.id, st.name as status, t.title, s.submitted_at FROM Submissions s
     JOIN Statuses st ON s.status_id = st.id
     JOIN Tasks t ON s.task_id = t.id
     WHERE s.user_id = $1
