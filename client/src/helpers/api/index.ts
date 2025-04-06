@@ -24,6 +24,17 @@ export interface ProblemPageQuery {
   tags?: string | undefined;
   status?: string | undefined;
 }
+export interface SubmissionsQuery {
+  search: string | undefined;
+  page: number;
+  statuses: string | undefined;
+}
+export interface Submission {
+  id: number;
+  status: string;
+  title: string;
+  submitted_at: string;
+}
 
 export interface Tag {
   id: number,
@@ -113,21 +124,18 @@ Promise<{ numOfPages: number }> => {
 
 /* SUBMISSION HANDLERS */
 
-export const fetchSubmissions = async (query: ProblemsQuery): Promise<Problem[]> => {
+export const fetchSubmissions = async (query: SubmissionsQuery): Promise<Submission[]> => {
   const {
-    search, tags, page, status,
+    search, page, statuses,
   } = query;
   let queryString = `?page=${page}`;
   if (search) {
     queryString += `&search=${encodeURIComponent(search)}`;
   }
-  if (tags) {
-    queryString += `&tags=${encodeURIComponent(tags)}`;
+  if (statuses) {
+    queryString += `&statuses=${encodeURIComponent(statuses)}`;
   }
-  if (status) {
-    queryString += `&status=${encodeURIComponent(status)}`;
-  }
-  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/problems${queryString}`, {
+  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/submissions${queryString}`, {
     method: 'GET',
     credentials: 'include',
   });

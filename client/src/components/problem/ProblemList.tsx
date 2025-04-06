@@ -8,10 +8,10 @@ interface ProblemListProps {
 }
 function ProblemList({ problems }: ProblemListProps) {
   return (
-    <Flex gap="5" width="100%" direction="column" align="center">
-      {problems.map((problem) => (
+    <Flex width="100%" direction="column" align="center">
+      {problems.map((problem, index) => (
         <Link to="/problems/$id" params={{ id: problem.id.toString() }} style={{ width: '100%' }} key={problem.id}>
-          <Flex width="100%" align="center" justify="center" gap="2">
+          <Flex height="10" width="100%" align="center" justify="center" gap="2" backgroundColor={index % 2 === 0 ? 'tile-bg' : ''}>
             <Flex width="10%">
               {problem.statuses !== null && (problem.statuses.some((status) => status === 'Accepted') ? <LuCheck color="#16a34a" /> : <LuLoader color="#facc15" />)}
             </Flex>

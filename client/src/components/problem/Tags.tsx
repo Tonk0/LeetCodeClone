@@ -2,10 +2,11 @@ import {
   createListCollection, Flex, ListCollection, Portal, Select,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LuX } from 'react-icons/lu';
 import { useNavigate } from '@tanstack/react-router';
 import { fetchTags } from '@/helpers/api';
+import { AuthContext } from '@/context/AuthContext';
 
 const statuses = createListCollection({
   items: [
@@ -18,6 +19,7 @@ interface TagCollection {
   value: string,
 }
 function Tags() {
+  const { isAuth } = useContext(AuthContext);
   const navigate = useNavigate();
   const [tagsCollection, setTagsCollection] = useState<ListCollection<TagCollection>>(
     createListCollection({ items: [] }),
@@ -80,7 +82,7 @@ function Tags() {
           </Select.Positioner>
         </Portal>
       </Select.Root>
-      <Select.Root value={statusValue} onValueChange={(e) => setStatusValue(e.value)} collection={statuses} size="sm">
+      <Select.Root disabled={!isAuth} value={statusValue} onValueChange={(e) => setStatusValue(e.value)} collection={statuses} size="sm">
         <Select.Control>
           <Select.Trigger cursor="pointer">
             <Select.ValueText placeholder="Statuses" />
