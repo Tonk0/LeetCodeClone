@@ -1,6 +1,5 @@
 const query = require("../db/db");
-const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require("../jwtConfig");
+const findUserByToken = require('../helpers/FindUserByToken');
 const getProblems = async (req, res) => {
   const {search, tags, page = 1, status} = req.query
   const { token } = req.cookies;
@@ -42,7 +41,7 @@ const getProblems = async (req, res) => {
     )
     LIMIT 20 OFFSET $3
   `
-  const data = (await query(queryString, [search ?? null, tags?.split(','), page > 0 ? page - 1 : 0, user?.id, status ?? null])).rows;
+  const data = (await query(queryString, [search ?? null, tags?.split(','), page > 0 ? (page - 1)*20 : 0, user?.id, status ?? null])).rows;
   res.status(200).json(data)
 }
 
@@ -85,17 +84,4 @@ const getNumOfPage = async (req, res) => {
 module.exports = {
   getProblems,
   getNumOfPage,
-}
-
-async function findUserByToken(token) {
-  let decodedToken = null;
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) return null;
-    decodedToken = decoded
-  });
-  if (decodedToken) {
-    const user = (await query('SELECT * FROM Users WHERE email = $1 AND username = $2', [decodedToken.email, decodedToken.login])).rows[0];
-    return user || null;
-  }
-  return null;
 }
