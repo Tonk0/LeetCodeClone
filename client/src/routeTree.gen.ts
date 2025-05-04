@@ -8,6 +8,8 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
@@ -16,9 +18,17 @@ import { Route as LoginImport } from './routes/login'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as IndexImport } from './routes/index'
 import { Route as SubmissionsIdImport } from './routes/submissions/$id'
-import { Route as ProblemsIdImport } from './routes/problems/$id'
 import { Route as LayoutSubmissionsImport } from './routes/_layout.submissions'
 import { Route as LayoutProblemsImport } from './routes/_layout.problems'
+import { Route as ProblemsIdIndexImport } from './routes/problems/$id/index'
+import { Route as ProblemsIdProblemLayoutImport } from './routes/problems/$id/_problemLayout'
+import { Route as ProblemsIdProblemLayoutDescImport } from './routes/problems/$id/_problemLayout.desc'
+import { Route as ProblemsIdProblemLayoutSubmissionsIndexImport } from './routes/problems/$id/_problemLayout.submissions/index'
+import { Route as ProblemsIdProblemLayoutSubmissionsIdImport } from './routes/problems/$id/_problemLayout.submissions/$id'
+
+// Create Virtual Routes
+
+const ProblemsIdImport = createFileRoute('/problems/$id')()
 
 // Create/Update Routes
 
@@ -45,15 +55,15 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const SubmissionsIdRoute = SubmissionsIdImport.update({
-  id: '/submissions/$id',
-  path: '/submissions/$id',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const ProblemsIdRoute = ProblemsIdImport.update({
   id: '/problems/$id',
   path: '/problems/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SubmissionsIdRoute = SubmissionsIdImport.update({
+  id: '/submissions/$id',
+  path: '/submissions/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -68,6 +78,38 @@ const LayoutProblemsRoute = LayoutProblemsImport.update({
   path: '/problems',
   getParentRoute: () => LayoutRoute,
 } as any)
+
+const ProblemsIdIndexRoute = ProblemsIdIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProblemsIdRoute,
+} as any)
+
+const ProblemsIdProblemLayoutRoute = ProblemsIdProblemLayoutImport.update({
+  id: '/_problemLayout',
+  getParentRoute: () => ProblemsIdRoute,
+} as any)
+
+const ProblemsIdProblemLayoutDescRoute =
+  ProblemsIdProblemLayoutDescImport.update({
+    id: '/desc',
+    path: '/desc',
+    getParentRoute: () => ProblemsIdProblemLayoutRoute,
+  } as any)
+
+const ProblemsIdProblemLayoutSubmissionsIndexRoute =
+  ProblemsIdProblemLayoutSubmissionsIndexImport.update({
+    id: '/submissions/',
+    path: '/submissions/',
+    getParentRoute: () => ProblemsIdProblemLayoutRoute,
+  } as any)
+
+const ProblemsIdProblemLayoutSubmissionsIdRoute =
+  ProblemsIdProblemLayoutSubmissionsIdImport.update({
+    id: '/submissions/$id',
+    path: '/submissions/$id',
+    getParentRoute: () => ProblemsIdProblemLayoutRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -115,6 +157,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutSubmissionsImport
       parentRoute: typeof LayoutImport
     }
+    '/submissions/$id': {
+      id: '/submissions/$id'
+      path: '/submissions/$id'
+      fullPath: '/submissions/$id'
+      preLoaderRoute: typeof SubmissionsIdImport
+      parentRoute: typeof rootRoute
+    }
     '/problems/$id': {
       id: '/problems/$id'
       path: '/problems/$id'
@@ -122,12 +171,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProblemsIdImport
       parentRoute: typeof rootRoute
     }
-    '/submissions/$id': {
-      id: '/submissions/$id'
+    '/problems/$id/_problemLayout': {
+      id: '/problems/$id/_problemLayout'
+      path: '/problems/$id'
+      fullPath: '/problems/$id'
+      preLoaderRoute: typeof ProblemsIdProblemLayoutImport
+      parentRoute: typeof ProblemsIdRoute
+    }
+    '/problems/$id/': {
+      id: '/problems/$id/'
+      path: '/'
+      fullPath: '/problems/$id/'
+      preLoaderRoute: typeof ProblemsIdIndexImport
+      parentRoute: typeof ProblemsIdImport
+    }
+    '/problems/$id/_problemLayout/desc': {
+      id: '/problems/$id/_problemLayout/desc'
+      path: '/desc'
+      fullPath: '/problems/$id/desc'
+      preLoaderRoute: typeof ProblemsIdProblemLayoutDescImport
+      parentRoute: typeof ProblemsIdProblemLayoutImport
+    }
+    '/problems/$id/_problemLayout/submissions/$id': {
+      id: '/problems/$id/_problemLayout/submissions/$id'
       path: '/submissions/$id'
-      fullPath: '/submissions/$id'
-      preLoaderRoute: typeof SubmissionsIdImport
-      parentRoute: typeof rootRoute
+      fullPath: '/problems/$id/submissions/$id'
+      preLoaderRoute: typeof ProblemsIdProblemLayoutSubmissionsIdImport
+      parentRoute: typeof ProblemsIdProblemLayoutImport
+    }
+    '/problems/$id/_problemLayout/submissions/': {
+      id: '/problems/$id/_problemLayout/submissions/'
+      path: '/submissions'
+      fullPath: '/problems/$id/submissions'
+      preLoaderRoute: typeof ProblemsIdProblemLayoutSubmissionsIndexImport
+      parentRoute: typeof ProblemsIdProblemLayoutImport
     }
   }
 }
@@ -147,6 +224,40 @@ const LayoutRouteChildren: LayoutRouteChildren = {
 const LayoutRouteWithChildren =
   LayoutRoute._addFileChildren(LayoutRouteChildren)
 
+interface ProblemsIdProblemLayoutRouteChildren {
+  ProblemsIdProblemLayoutDescRoute: typeof ProblemsIdProblemLayoutDescRoute
+  ProblemsIdProblemLayoutSubmissionsIdRoute: typeof ProblemsIdProblemLayoutSubmissionsIdRoute
+  ProblemsIdProblemLayoutSubmissionsIndexRoute: typeof ProblemsIdProblemLayoutSubmissionsIndexRoute
+}
+
+const ProblemsIdProblemLayoutRouteChildren: ProblemsIdProblemLayoutRouteChildren =
+  {
+    ProblemsIdProblemLayoutDescRoute: ProblemsIdProblemLayoutDescRoute,
+    ProblemsIdProblemLayoutSubmissionsIdRoute:
+      ProblemsIdProblemLayoutSubmissionsIdRoute,
+    ProblemsIdProblemLayoutSubmissionsIndexRoute:
+      ProblemsIdProblemLayoutSubmissionsIndexRoute,
+  }
+
+const ProblemsIdProblemLayoutRouteWithChildren =
+  ProblemsIdProblemLayoutRoute._addFileChildren(
+    ProblemsIdProblemLayoutRouteChildren,
+  )
+
+interface ProblemsIdRouteChildren {
+  ProblemsIdProblemLayoutRoute: typeof ProblemsIdProblemLayoutRouteWithChildren
+  ProblemsIdIndexRoute: typeof ProblemsIdIndexRoute
+}
+
+const ProblemsIdRouteChildren: ProblemsIdRouteChildren = {
+  ProblemsIdProblemLayoutRoute: ProblemsIdProblemLayoutRouteWithChildren,
+  ProblemsIdIndexRoute: ProblemsIdIndexRoute,
+}
+
+const ProblemsIdRouteWithChildren = ProblemsIdRoute._addFileChildren(
+  ProblemsIdRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof LayoutRouteWithChildren
@@ -154,8 +265,12 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/problems': typeof LayoutProblemsRoute
   '/submissions': typeof LayoutSubmissionsRoute
-  '/problems/$id': typeof ProblemsIdRoute
   '/submissions/$id': typeof SubmissionsIdRoute
+  '/problems/$id': typeof ProblemsIdProblemLayoutRouteWithChildren
+  '/problems/$id/': typeof ProblemsIdIndexRoute
+  '/problems/$id/desc': typeof ProblemsIdProblemLayoutDescRoute
+  '/problems/$id/submissions/$id': typeof ProblemsIdProblemLayoutSubmissionsIdRoute
+  '/problems/$id/submissions': typeof ProblemsIdProblemLayoutSubmissionsIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -165,8 +280,11 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/problems': typeof LayoutProblemsRoute
   '/submissions': typeof LayoutSubmissionsRoute
-  '/problems/$id': typeof ProblemsIdRoute
   '/submissions/$id': typeof SubmissionsIdRoute
+  '/problems/$id': typeof ProblemsIdIndexRoute
+  '/problems/$id/desc': typeof ProblemsIdProblemLayoutDescRoute
+  '/problems/$id/submissions/$id': typeof ProblemsIdProblemLayoutSubmissionsIdRoute
+  '/problems/$id/submissions': typeof ProblemsIdProblemLayoutSubmissionsIndexRoute
 }
 
 export interface FileRoutesById {
@@ -177,8 +295,13 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/_layout/problems': typeof LayoutProblemsRoute
   '/_layout/submissions': typeof LayoutSubmissionsRoute
-  '/problems/$id': typeof ProblemsIdRoute
   '/submissions/$id': typeof SubmissionsIdRoute
+  '/problems/$id': typeof ProblemsIdRouteWithChildren
+  '/problems/$id/_problemLayout': typeof ProblemsIdProblemLayoutRouteWithChildren
+  '/problems/$id/': typeof ProblemsIdIndexRoute
+  '/problems/$id/_problemLayout/desc': typeof ProblemsIdProblemLayoutDescRoute
+  '/problems/$id/_problemLayout/submissions/$id': typeof ProblemsIdProblemLayoutSubmissionsIdRoute
+  '/problems/$id/_problemLayout/submissions/': typeof ProblemsIdProblemLayoutSubmissionsIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -190,8 +313,12 @@ export interface FileRouteTypes {
     | '/register'
     | '/problems'
     | '/submissions'
-    | '/problems/$id'
     | '/submissions/$id'
+    | '/problems/$id'
+    | '/problems/$id/'
+    | '/problems/$id/desc'
+    | '/problems/$id/submissions/$id'
+    | '/problems/$id/submissions'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -200,8 +327,11 @@ export interface FileRouteTypes {
     | '/register'
     | '/problems'
     | '/submissions'
-    | '/problems/$id'
     | '/submissions/$id'
+    | '/problems/$id'
+    | '/problems/$id/desc'
+    | '/problems/$id/submissions/$id'
+    | '/problems/$id/submissions'
   id:
     | '__root__'
     | '/'
@@ -210,8 +340,13 @@ export interface FileRouteTypes {
     | '/register'
     | '/_layout/problems'
     | '/_layout/submissions'
-    | '/problems/$id'
     | '/submissions/$id'
+    | '/problems/$id'
+    | '/problems/$id/_problemLayout'
+    | '/problems/$id/'
+    | '/problems/$id/_problemLayout/desc'
+    | '/problems/$id/_problemLayout/submissions/$id'
+    | '/problems/$id/_problemLayout/submissions/'
   fileRoutesById: FileRoutesById
 }
 
@@ -220,8 +355,8 @@ export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
-  ProblemsIdRoute: typeof ProblemsIdRoute
   SubmissionsIdRoute: typeof SubmissionsIdRoute
+  ProblemsIdRoute: typeof ProblemsIdRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -229,8 +364,8 @@ const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
-  ProblemsIdRoute: ProblemsIdRoute,
   SubmissionsIdRoute: SubmissionsIdRoute,
+  ProblemsIdRoute: ProblemsIdRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -247,8 +382,8 @@ export const routeTree = rootRoute
         "/_layout",
         "/login",
         "/register",
-        "/problems/$id",
-        "/submissions/$id"
+        "/submissions/$id",
+        "/problems/$id"
       ]
     },
     "/": {
@@ -275,11 +410,40 @@ export const routeTree = rootRoute
       "filePath": "_layout.submissions.tsx",
       "parent": "/_layout"
     },
-    "/problems/$id": {
-      "filePath": "problems/$id.tsx"
-    },
     "/submissions/$id": {
       "filePath": "submissions/$id.tsx"
+    },
+    "/problems/$id": {
+      "filePath": "problems/$id",
+      "children": [
+        "/problems/$id/_problemLayout",
+        "/problems/$id/"
+      ]
+    },
+    "/problems/$id/_problemLayout": {
+      "filePath": "problems/$id/_problemLayout.tsx",
+      "parent": "/problems/$id",
+      "children": [
+        "/problems/$id/_problemLayout/desc",
+        "/problems/$id/_problemLayout/submissions/$id",
+        "/problems/$id/_problemLayout/submissions/"
+      ]
+    },
+    "/problems/$id/": {
+      "filePath": "problems/$id/index.tsx",
+      "parent": "/problems/$id"
+    },
+    "/problems/$id/_problemLayout/desc": {
+      "filePath": "problems/$id/_problemLayout.desc.tsx",
+      "parent": "/problems/$id/_problemLayout"
+    },
+    "/problems/$id/_problemLayout/submissions/$id": {
+      "filePath": "problems/$id/_problemLayout.submissions/$id.tsx",
+      "parent": "/problems/$id/_problemLayout"
+    },
+    "/problems/$id/_problemLayout/submissions/": {
+      "filePath": "problems/$id/_problemLayout.submissions/index.tsx",
+      "parent": "/problems/$id/_problemLayout"
     }
   }
 }

@@ -19,6 +19,11 @@ export interface Problem {
   title: string;
   statuses: Array<Status>;
 }
+export interface ProblemDesc {
+  id: number;
+  title: string;
+  description: string;
+}
 export interface ProblemPageQuery {
   search?: string | undefined;
   tags?: string | undefined;
@@ -115,6 +120,17 @@ Promise<{ numOfPages: number }> => {
     credentials: 'include',
   });
 
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({ message: 'Неизвестная ошибка' }));
+    throw new Error(errData.message);
+  }
+  return response.json();
+};
+
+export const fetchProblem = async (problemId: string): Promise<ProblemDesc> => {
+  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/problems/${problemId}`, {
+    method: 'GET',
+  });
   if (!response.ok) {
     const errData = await response.json().catch(() => ({ message: 'Неизвестная ошибка' }));
     throw new Error(errData.message);
