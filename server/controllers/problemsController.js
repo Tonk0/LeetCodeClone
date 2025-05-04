@@ -45,6 +45,18 @@ const getProblems = async (req, res) => {
   res.status(200).json(data)
 }
 
+const getProblem = async (req, res) => {
+  const { id } = req.params;
+  const queryString = `
+    SELECT * FROM Tasks t WHERE t.id = $1
+  `
+  const data = (await query(queryString, [id])).rows;
+  if (data.length <= 0) {
+    return res.status(404).json({message: 'Задача не найдена'})
+  }
+  res.status(200).json(data[0]);
+}
+
 const getNumOfPage = async (req, res) => {
   const {search, tags, status} = req.query
   const { token } = req.cookies;
@@ -84,4 +96,5 @@ const getNumOfPage = async (req, res) => {
 module.exports = {
   getProblems,
   getNumOfPage,
+  getProblem
 }
