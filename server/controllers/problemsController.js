@@ -57,6 +57,24 @@ const getProblem = async (req, res) => {
   res.status(200).json(data[0]);
 }
 
+const getSubmissionsForProblem = async (req, res) => {
+  const { id } = req.params;
+  const { token } = req.cookies;
+
+  const user = await findUserByToken(token);
+  if (!user) {
+    return res.status(401).json({message: 'Пользователь не найден'});
+  }
+  const queryString = `
+    SELECT s.id, memory_used, execution_time, submitted_at, pm.name as programming_language, st.name as status FROM Submissions s
+    LEFT JOIN Programming_Languages pm ON s.programming_language_id = pm.id
+    LEFT JOIN Statuses st ON s.status_id = st.id
+    WHERE task_id = $1 AND user_id = $2
+  `
+  const data = (await query(queryString, [id, user.id])).rows;
+  res.status(200).json(data);
+}
+
 const getNumOfPage = async (req, res) => {
   const {search, tags, status} = req.query
   const { token } = req.cookies;
@@ -96,5 +114,6 @@ const getNumOfPage = async (req, res) => {
 module.exports = {
   getProblems,
   getNumOfPage,
-  getProblem
+  getProblem,
+  getSubmissionsForProblem
 }
