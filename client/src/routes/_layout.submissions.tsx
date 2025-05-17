@@ -18,7 +18,7 @@ function RouteComponent() {
     return (
       <Flex direction="column" gap="5">
         <p>Сначала нужно авторизоваться</p>
-        <Button role="link" size="xl">
+        <Button size="xl" asChild>
           <Link to="/login">Войти</Link>
         </Button>
       </Flex>

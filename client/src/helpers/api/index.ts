@@ -40,6 +40,14 @@ export interface Submission {
   title: string;
   submitted_at: string;
 }
+export interface SubmissionForProblem {
+  id: number;
+  memory_used: number;
+  execution_time: number;
+  submitted_at: string;
+  programming_language: string;
+  status: string;
+}
 
 export interface Tag {
   id: number,
@@ -130,6 +138,19 @@ Promise<{ numOfPages: number }> => {
 export const fetchProblem = async (problemId: string): Promise<ProblemDesc> => {
   const response = await fetch(`${import.meta.env.VITE_BASE_URL}/problems/${problemId}`, {
     method: 'GET',
+  });
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({ message: 'Неизвестная ошибка' }));
+    throw new Error(errData.message);
+  }
+  return response.json();
+};
+
+export const fetchSubmissionsForProblem = async (problemId: string):
+Promise<SubmissionForProblem[]> => {
+  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/problems/${problemId}/submissions`, {
+    method: 'GET',
+    credentials: 'include',
   });
   if (!response.ok) {
     const errData = await response.json().catch(() => ({ message: 'Неизвестная ошибка' }));

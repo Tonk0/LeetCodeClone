@@ -1,6 +1,7 @@
 import {
   createContext, ReactNode, useContext, useMemo, useState,
 } from 'react';
+import { CodeEditor } from '@/components/problem/CodeEditor';
 
 interface IPanelContext {
   leftPanel: ReactNode;
@@ -13,7 +14,7 @@ const PanelContext = createContext<IPanelContext | null>(null);
 
 export function PanelProvider({ children }: { children: ReactNode }) {
   const [leftPanel, setLeftPanel] = useState<ReactNode>(null);
-  const [rightPanel, setRightPanel] = useState<ReactNode>(null);
+  const [rightPanel, setRightPanel] = useState<ReactNode>(<CodeEditor />);
 
   const obj = useMemo(() => ({
     leftPanel, rightPanel, setLeftPanel, setRightPanel,

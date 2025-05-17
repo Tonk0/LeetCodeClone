@@ -1,13 +1,13 @@
-import {
-  Box, Flex, Text, useBreakpointValue,
-} from '@chakra-ui/react';
-import { useParams, Link } from '@tanstack/react-router';
-import { LuFileText, LuHistory } from 'react-icons/lu';
-import { useEffect, useState } from 'react';
-import { usePanel } from '@/context/PanelContext';
+import { Box, Flex, useBreakpointValue } from '@chakra-ui/react';
+import { useEffect } from 'react';
+import { Link, useParams } from '@tanstack/react-router';
+import { LuCode, LuFileText, LuHistory } from 'react-icons/lu';
 import { useMoveHorizontally } from '@/hooks/useMoveHorizontally';
 import { useMoveVertically } from '@/hooks/useMoveVertically';
 import { useElementWidth } from '@/hooks/useElementWidth';
+import { useContainerFold } from '@/hooks/useContainerFold';
+import { useFixedWidthBelowThreshold } from '@/hooks/useFixedWidthBelowThreshold';
+import { usePanel } from '@/context/PanelContext';
 
 export function ProblemPanel() {
   const { leftPanel, rightPanel } = usePanel();
@@ -16,36 +16,57 @@ export function ProblemPanel() {
     containerRef, leftContainerRef, handleMouseDown, handleTouchStart,
   } = useMoveHorizontally();
   const {
-    containerRef: secondHalfRef,
+    containerRef: rightContainerRef,
     topContainerRef, handleMouseDown: handleMouseDownVert, handleTouchStart: handleTouchStartVert,
   } = useMoveVertically();
-  const width = useElementWidth(leftContainerRef);
-  const [isFolded, setIsFolded] = useState(false);
+
   const isMobile = useBreakpointValue({ base: true, lg: false });
-  useEffect(() => {
-    if (containerRef.current) {
-      if ((width / containerRef.current.getBoundingClientRect().width) * 100 <= 3) {
-        setIsFolded(true);
-      } else {
-        setIsFolded(false);
-      }
-    }
-  }, [width, containerRef]);
+  const leftContainerWidth = useElementWidth(leftContainerRef);
+  const rightContainerWidth = useElementWidth(rightContainerRef);
+
+  const isLeftFolded = useContainerFold({
+    parentContainer: containerRef,
+    elementWidth: leftContainerWidth,
+    threshold: 3,
+  });
+
+  const isRightFolded = useContainerFold({
+    parentContainer: containerRef,
+    elementWidth: rightContainerWidth,
+    threshold: 3,
+  });
+
+  const leftContent = useFixedWidthBelowThreshold({
+    threshold: 30,
+    elementWidth: leftContainerWidth,
+    containerRef,
+  });
+  const rightTopContent = useFixedWidthBelowThreshold({
+    threshold: 30,
+    elementWidth: rightContainerWidth,
+    containerRef,
+  });
+  const rightBottomContent = useFixedWidthBelowThreshold({
+    threshold: 30,
+    elementWidth: rightContainerWidth,
+    containerRef,
+  });
 
   useEffect(() => {
-    if (leftContainerRef.current) {
-      if (isMobile) {
-        setIsFolded(false);
-        leftContainerRef.current.style.width = '100%';
-      } else {
-        leftContainerRef.current.style.width = '50%';
-      }
+    if (!leftContainerRef.current || !rightContainerRef.current || !topContainerRef.current) return;
+
+    if (isMobile) {
+      leftContainerRef.current.style.width = '100%';
+      rightContainerRef.current.style.width = '100%';
+      topContainerRef.current.style.height = '50%';
+    } else {
+      leftContainerRef.current.style.width = '50%';
     }
-  }, [isMobile, leftContainerRef]);
+  }, [isMobile, leftContainerRef, rightContainerRef, topContainerRef]);
   return (
-    <Flex alignItems="flex-start" direction={{ lg: 'row', base: 'column' }} w="100vw" h="100vh" ref={containerRef}>
-      <Flex ref={leftContainerRef} width={{ lg: '50%', base: '100%' }} minW="3%" flexShrink="0" flexDirection="column" h={{base: 'auto', lg: '100%'}}>
-        <Flex gap="5" w="100%" bg={{ base: 'gray.200', _dark: 'gray.800' }} h={isFolded ? '100%' : '5%'} writingMode={isFolded ? 'vertical-lr' : 'inherit'} align="center" padding="5" overflow="hidden">
+    <Flex ref={containerRef} w="100vw" height="100vh" alignItems="flex-start" direction={{ lg: 'row', base: 'column' }}>
+      <Flex ref={leftContainerRef} w={{ lg: '50%', base: '100%' }} h={{ lg: '100%', base: 'auto' }} minW="3%" direction="column" overflow="hidden">
+        <Flex w="100%" h={isLeftFolded ? '100vh' : '5vh'} writingMode={isLeftFolded ? 'vertical-lr' : 'inherit'} bg={{ base: 'gray.200', _dark: 'gray.800' }} flexShrink="0" align="center" gap="5" padding="5">
           <Link to="/problems/$id/desc" params={{ id }}>
             <Flex align="center" gap="2">
               <LuFileText />
@@ -59,26 +80,60 @@ export function ProblemPanel() {
             </Flex>
           </Link>
         </Flex>
-        {!isFolded && (
-        <Flex padding="5" w="100%" direction="column" overflow="auto">
-          {leftPanel}
+        <Flex h="100%" overflow="auto" display={isLeftFolded ? 'none' : 'flex'}>
+          <div ref={leftContent}>
+            {leftPanel}
+          </div>
         </Flex>
-        )}
-
       </Flex>
-      <Box flexShrink="0" onMouseDown={handleMouseDown} display={{ lg: 'inherit', base: 'none' }} onTouchStart={handleTouchStart} h="100%" w="3px" backgroundColor="blue.400" cursor="ew-resize" userSelect="none" />
-      <Flex ref={secondHalfRef} h={{ base: '', lg: '100%' }} direction="column" flex={{ base: '', lg: '1' }} alignItems="center" justify="center">
-        <Flex w="100%" h="50%" align="center" justify="center" ref={topContainerRef}>
-          {rightPanel}
-          <Text>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit eaque officia,
-            praesentium cumque distinctio facere excepturi est ipsa fugiat
-            neque veritatis ea quam iure rerum! Labore quis temporibus consectetur dicta!
-          </Text>
+      <Box onMouseDown={handleMouseDown} onTouchStart={handleTouchStart} display={{ lg: 'inherit', base: 'none' }} h="100%" w="3px" backgroundColor="blue.400" cursor="ew-resize" userSelect="none" />
+      <Flex ref={rightContainerRef} minW="3%" flex={{ lg: '1', base: '' }} h={{ lg: '100%', base: 'auto' }} direction="column" overflow="hidden">
+        <Flex minH="5vh" ref={topContainerRef} h="50%" direction="column">
+          <Flex w="100%" h={isRightFolded ? '100%' : '5vh'} writingMode={isRightFolded ? 'vertical-lr' : 'inherit'} bg={{ base: 'gray.200', _dark: 'gray.800' }} align="center" gap="5" padding="5">
+            <Flex align="center" gap="2">
+              <LuCode />
+              Редактор
+            </Flex>
+            {sessionStorage.getItem('submissionId') && (
+              <Link to="/problems/$id/submissions/$submissionId" params={{ submissionId: sessionStorage.getItem('submissionId') }}>
+                <Flex align="center" gap="2">
+                  Попытка
+                  {sessionStorage.getItem('submissionId')}
+                </Flex>
+              </Link>
+            )}
+          </Flex>
+          {!isRightFolded && (
+          <Flex h="100%" overflow="auto">
+            <div ref={rightTopContent} style={{width: '100%'}}>
+              { rightPanel }
+            </div>
+          </Flex>
+          )}
         </Flex>
-        <Box display={{ lg: 'inherit', base: 'none' }} w="100%" h="3px" onMouseDown={handleMouseDownVert} onTouchStart={handleTouchStartVert} backgroundColor="blue.400" cursor="ns-resize" />
-        <Flex w="100%" h="50%" flex="1" align="center" justify="center">
-          bikinibottom
+        <Box onMouseDown={handleMouseDownVert} onTouchStart={handleTouchStartVert} display={{ lg: 'inherit', base: 'none' }} h="3px" w="100%" backgroundColor="blue.400" flexShrink="0" cursor="ns-resize" userSelect="none" />
+        <Flex minH="5vh" flex="1" direction="column">
+          <Flex w="100%" h={isRightFolded ? '100%' : '5vh'} writingMode={isRightFolded ? 'vertical-lr' : 'inherit'} bg={{ base: 'gray.200', _dark: 'gray.800' }} align="center" gap="5" padding="5">
+            <Link to="/problems/$id/desc" params={{ id }}>
+              <Flex align="center" gap="2">
+                <LuFileText />
+                Описание
+              </Flex>
+            </Link>
+            <Link to="/problems/$id/submissions" params={{ id }}>
+              <Flex align="center" gap="2">
+                <LuHistory />
+                Попытки
+              </Flex>
+            </Link>
+          </Flex>
+          {!isRightFolded && (
+          <Flex h="100%" overflow="auto">
+            <div ref={rightBottomContent}>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam debitis, error neque inventore laborum adipisci molestiae placeat, possimus in voluptas officiis magni iusto ipsam ea voluptate maiores repudiandae minus exercitationem.
+            </div>
+          </Flex>
+          )}
         </Flex>
       </Flex>
     </Flex>

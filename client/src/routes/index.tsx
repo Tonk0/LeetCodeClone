@@ -28,7 +28,7 @@ function Index() {
         <Flex align="flex-end">
           <Heading textAlign="center" className={classes.caret} size="4xl">{text}</Heading>
         </Flex>
-        <Button role="link" size="xl">
+        <Button size="xl" asChild>
           <Link to={isAuth ? '/' : '/login'}>Начать</Link>
         </Button>
       </Flex>

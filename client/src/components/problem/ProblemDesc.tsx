@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/no-unstable-nested-components */
-import { Blockquote, Code, Text } from '@chakra-ui/react';
+import { Blockquote, Code, Flex, Text } from '@chakra-ui/react';
 import Markdown, { Components } from 'react-markdown';
 import { ProblemDesc as Task } from '@/helpers/api';
 
@@ -37,8 +37,11 @@ const components: Components = {
 };
 export function ProblemDesc({ task }: ProblemDescProps) {
   return (
-    <Markdown components={components}>
-      {task && task.description}
-    </Markdown>
+    <Flex p="5" direction="column">
+      <Markdown components={components}>
+        {task && task.description}
+      </Markdown>
+    </Flex>
+
   );
 }
