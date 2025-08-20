@@ -1,5 +1,6 @@
 const query = require("../db/db");
 const findUserByToken = require('../helpers/FindUserByToken');
+const runContainer = require("../helpers/RunContainer");
 const getProblems = async (req, res) => {
   const {search, tags, page = 1, status} = req.query
   const { token } = req.cookies;
@@ -111,9 +112,57 @@ const getNumOfPage = async (req, res) => {
   res.status(200).json({numOfPages: data.rows[0].count});
 }
 
+const getTemplate = async (req, res) => {
+  const { id } = req.params;
+  const { language } = req.query;
+  const queryString = `
+    SELECT template FROM Task_Templates tt
+    JOIN Programming_Languages pl ON tt.programming_language_id = pl.id
+    WHERE tt.task_id = $1 AND pl.name = $2
+  `
+
+  const data = (await query(queryString, [id, language])).rows[0];
+
+  res.status(200).json(data);
+}
+
+const postSubmission = async (req, res) => {
+  const {token} = req.cookies;
+  const user = await findUserByToken(token);
+  if (!user) {
+    return res.status(401).json({message: 'Пользователь не авторизован'});
+  }
+  const { id } = req.params;
+  const {lang, code} = req.body;
+  const queryString = `
+    INSERT INTO Submissions
+      (user_id, task_id, status_id, memory_used, execution_time, code, programming_language_id)
+    VALUES (
+      $1,
+      $2,
+      (SELECT id FROM Statuses WHERE name = $3),
+      $4,
+      $5,
+      $6,
+      (SELECT id FROM Programming_Languages WHERE name = $7)
+    )
+    RETURNING id
+  `
+  try {
+    const submissionObject = await runContainer(id, lang, code);
+    const values = [user.id, id, submissionObject.status, submissionObject.memory ?? null, submissionObject.runtime ?? null, code, lang]
+    const data = (await query(queryString, values)).rows[0];
+    return res.status(200).json(submissionObject);
+  } catch (err) {
+    return res.status(500).json({message: 'Что-то пошло не так'})
+  }
+}
+
 module.exports = {
   getProblems,
   getNumOfPage,
   getProblem,
-  getSubmissionsForProblem
+  getSubmissionsForProblem,
+  getTemplate, 
+  postSubmission,
 }

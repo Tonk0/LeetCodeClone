@@ -3,17 +3,17 @@ const createJSContainer = require("./helpers/JS/CreateJSContainer");
 const createPythonContainer = require("./helpers/Python/CreatePythonContainer");
 
 const languageConfig = {
-  1: {
+  'C++': {
     name: 'C++',
     extension: 'cpp',
     createContainer: createCPPContainer
   },
-  2: {
+  'Python': {
     name: 'Python',
     extension: 'py',
     createContainer: createPythonContainer
   },
-  3: {
+  'Java Script': {
     name: 'Java Script',
     extension: 'js',
     createContainer: createJSContainer
