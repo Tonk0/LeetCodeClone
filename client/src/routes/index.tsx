@@ -29,7 +29,7 @@ function Index() {
           <Heading textAlign="center" className={classes.caret} size="4xl">{text}</Heading>
         </Flex>
         <Button size="xl" asChild>
-          <Link to={isAuth ? '/' : '/login'}>Начать</Link>
+          <Link to={isAuth ? '/problems' : '/login'}>Начать</Link>
         </Button>
       </Flex>
     </Flex>

@@ -1,7 +1,7 @@
 import {
   Button, Flex, Heading, Input, Text,
 } from '@chakra-ui/react';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { FormEvent } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Message, sha512 } from 'js-sha512';
@@ -10,8 +10,10 @@ import { PasswordInput } from '@/components/ui/password-input';
 import { fetchAuth, LogData } from '@/helpers/api';
 
 function Login() {
+  const navigate = useNavigate();
   const { mutateAsync, isPending, error } = useMutation({
     mutationFn: (data: LogData) => fetchAuth<LogData>('login', data),
+    onSuccess: () => navigate({ to: '/problems', search: { page: 1 } }),
   });
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-throw-literal */
 export interface RegData {
   login: string;
   email: string;
@@ -159,6 +160,36 @@ Promise<SubmissionForProblem[]> => {
   return response.json();
 };
 
+export const fetchTemplate = async (id: string, language: string):
+Promise<{ template: string }> => {
+  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/problems/${id}/template?language=${encodeURIComponent(language)}`, {
+    method: 'GET',
+  });
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({ message: 'Неизвестная ошибка' }));
+    throw new Error(errData.message);
+  }
+  return response.json();
+};
+
+export const sendUserCode = async (id:string, lang: string, code: string) => {
+  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/problems/${id}/sendCode`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ lang, code }),
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({ message: 'Неизвестная ошибка' }));
+    throw {
+      message: errData.message,
+      status: response.status,
+    };
+  }
+  return response.json();
+};
 /* SUBMISSION HANDLERS */
 
 export const fetchSubmissions = async (query: SubmissionsQuery): Promise<Submission[]> => {

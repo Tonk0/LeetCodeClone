@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/no-unstable-nested-components */
-import { Blockquote, Code, Flex, Text } from '@chakra-ui/react';
+import {
+  Blockquote, Code, Flex, Text,
+} from '@chakra-ui/react';
 import Markdown, { Components } from 'react-markdown';
 import { ProblemDesc as Task } from '@/helpers/api';
 

@@ -16,7 +16,7 @@ function Register() {
   const { mutateAsync, isPending } = useMutation({
     mutationFn: (data: RegData) => fetchAuth<RegData>('register', data),
     onError: (err) => setServerError(err.message),
-    onSuccess: () => navigate({ to: '/' }),
+    onSuccess: () => navigate({ to: '/problems', search: { page: 1 } }),
   });
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     setServerError(null);

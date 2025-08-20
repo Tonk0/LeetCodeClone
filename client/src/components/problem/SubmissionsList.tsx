@@ -24,7 +24,7 @@ export function SubmissionsList({ submissions } : SubmissionsListProps) {
         <Text flex="1" textAlign="center">Память</Text>
       </Flex>
       {submissions.map((submission, index) => (
-        <Link key={submission.id} to="/problems/$id/submissions/$submissionId" params={{ submissionId: submission.id.toString(), id }}>
+        <Link key={submission.id} to="/problems/$id/submissions/$submissionId" search={{ refresh: null }} params={{ submissionId: submission.id.toString(), id }}>
           <Flex align="center" pl="5" pt="2" pb="2" w="100%" justifyContent="space-between" backgroundColor={index % 2 === 0 ? 'tile-bg' : ''}>
             <Flex direction="column" flex="1">
               <Text color={submission.status === 'Accepted' ? 'green.500' : 'red.500'}>

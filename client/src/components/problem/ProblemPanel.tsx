@@ -1,4 +1,6 @@
-import { Box, Flex, useBreakpointValue } from '@chakra-ui/react';
+import {
+  Box, Button, Flex, useBreakpointValue,
+} from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { Link, useParams } from '@tanstack/react-router';
 import { LuCode, LuFileText, LuHistory } from 'react-icons/lu';
@@ -8,9 +10,10 @@ import { useElementWidth } from '@/hooks/useElementWidth';
 import { useContainerFold } from '@/hooks/useContainerFold';
 import { useFixedWidthBelowThreshold } from '@/hooks/useFixedWidthBelowThreshold';
 import { usePanel } from '@/context/PanelContext';
+import { CodeEditor } from './CodeEditor';
 
 export function ProblemPanel() {
-  const { leftPanel, rightPanel } = usePanel();
+  const { leftPanel, rightPanel, setRightPanel } = usePanel();
   const { id } = useParams({ from: '/problems/$id' });
   const {
     containerRef, leftContainerRef, handleMouseDown, handleTouchStart,
@@ -62,7 +65,13 @@ export function ProblemPanel() {
     } else {
       leftContainerRef.current.style.width = '50%';
     }
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      sessionStorage.removeItem('submissionId');
+    };
   }, [isMobile, leftContainerRef, rightContainerRef, topContainerRef]);
+
   return (
     <Flex ref={containerRef} w="100vw" height="100vh" alignItems="flex-start" direction={{ lg: 'row', base: 'column' }}>
       <Flex ref={leftContainerRef} w={{ lg: '50%', base: '100%' }} h={{ lg: '100%', base: 'auto' }} minW="3%" direction="column" overflow="hidden">
@@ -90,12 +99,16 @@ export function ProblemPanel() {
       <Flex ref={rightContainerRef} minW="3%" flex={{ lg: '1', base: '' }} h={{ lg: '100%', base: 'auto' }} direction="column" overflow="hidden">
         <Flex minH="5vh" ref={topContainerRef} h="50%" direction="column">
           <Flex w="100%" h={isRightFolded ? '100%' : '5vh'} writingMode={isRightFolded ? 'vertical-lr' : 'inherit'} bg={{ base: 'gray.200', _dark: 'gray.800' }} align="center" gap="5" padding="5">
-            <Flex align="center" gap="2">
-              <LuCode />
-              Редактор
-            </Flex>
+            <Button variant="plain" fontSize="1em" p="0" h="auto" onClick={() => setRightPanel(<CodeEditor />)}>
+              <Flex align="center" gap="2">
+                <LuCode style={{ width: '16px', height: '16px' }} />
+                Редактор
+              </Flex>
+            </Button>
             {sessionStorage.getItem('submissionId') && (
-              <Link to="/problems/$id/submissions/$submissionId" params={{ submissionId: sessionStorage.getItem('submissionId') }}>
+              // refresh добавлен, ибо ссылка при переключении на редактор не меняется,
+              // а значит обратно на попытку перейти не получится
+              <Link to="/problems/$id/submissions/$submissionId" params={{ submissionId: sessionStorage.getItem('submissionId') || '', id }} search={{ refresh: Date.now() }}>
                 <Flex align="center" gap="2">
                   Попытка
                   {sessionStorage.getItem('submissionId')}
@@ -103,13 +116,11 @@ export function ProblemPanel() {
               </Link>
             )}
           </Flex>
-          {!isRightFolded && (
-          <Flex h="100%" overflow="auto">
-            <div ref={rightTopContent} style={{width: '100%'}}>
+          <Flex h={{ lg: '100%', base: '100vh' }} overflow="auto" display={isRightFolded ? 'none' : 'flex'}>
+            <div ref={rightTopContent} style={{ width: '100%' }}>
               { rightPanel }
             </div>
           </Flex>
-          )}
         </Flex>
         <Box onMouseDown={handleMouseDownVert} onTouchStart={handleTouchStartVert} display={{ lg: 'inherit', base: 'none' }} h="3px" w="100%" backgroundColor="blue.400" flexShrink="0" cursor="ns-resize" userSelect="none" />
         <Flex minH="5vh" flex="1" direction="column">
@@ -127,13 +138,11 @@ export function ProblemPanel() {
               </Flex>
             </Link>
           </Flex>
-          {!isRightFolded && (
-          <Flex h="100%" overflow="auto">
+          <Flex h={{lg: '100%', base: '100vh'}} overflow="auto" display={isRightFolded ? 'none' : 'flex'}>
             <div ref={rightBottomContent}>
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam debitis, error neque inventore laborum adipisci molestiae placeat, possimus in voluptas officiis magni iusto ipsam ea voluptate maiores repudiandae minus exercitationem.
             </div>
           </Flex>
-          )}
         </Flex>
       </Flex>
     </Flex>
