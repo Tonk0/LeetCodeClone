@@ -7,7 +7,7 @@ import { WrongAnswerResult } from './WrongAnswerResult';
 
 export function TestResults({ attemptResult }: { attemptResult: AttemptResult }) {
   return (
-    <Flex gap="5" direction="column">
+    <Flex w="100%" gap="5" direction="column">
       {attemptResult.isError ? (
         <ErrorResult errorResult={attemptResult} />
       ) : (

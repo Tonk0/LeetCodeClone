@@ -34,7 +34,7 @@ function isSolutionRight(testCases, userResults) {
         wrongTestCase: i+1,
         numOfTestCases: testCases.length,
         testCase: testCases[i],
-        userOutput: userResults[i]?.userResult || null,
+        userOutput: userResults[i]?.userResult ? JSON.stringify(userResults[i].userResult) : null,
         userLog: userResults[i]?.userLog || null
       }
     }

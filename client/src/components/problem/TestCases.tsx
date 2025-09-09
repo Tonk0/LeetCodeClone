@@ -16,7 +16,7 @@ export function TestCases() {
     setSelectedTestCaseIndex(index);
   };
   return (
-    <Flex gap="5" direction="column">
+    <Flex w="100%" gap="5" direction="column">
       {data && (
         <>
           <Flex gap="8">

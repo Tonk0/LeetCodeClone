@@ -99,6 +99,8 @@ export interface SubmissionDetails {
   status: string;
   attemptData: AttemptResult
   code: string
+  taskId: string;
+  taskTitle: string;
 }
 /* AUTH HANDLERS */
 export const fetchAuth = async <T>(endpoint: string, data: T) => {

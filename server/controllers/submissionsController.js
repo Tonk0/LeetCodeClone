@@ -41,10 +41,13 @@ const getSubmission = async (req, res) => {
     (SELECT COUNT(*) FROM Test_Cases WHERE task_id = s.task_id) as total_test_cases,
     (SELECT COUNT(*) + 1 FROM Test_Cases tc2 WHERE tc2.task_id = s.task_id AND tc2.id < s.wrong_test_case_id) as wrong_test_case_number, 
     tc.input as test_case_input,
-    tc.expected_output as test_case_expected_output
+    tc.expected_output as test_case_expected_output,
+    s.task_id as task_id,
+    tsk.title as task_title
     FROM Submissions s
     JOIN Statuses st ON s.status_id = st.id
     JOIN Programming_Languages pl ON s.programming_language_id = pl.id
+    JOIN Tasks tsk ON s.task_id = tsk.id
     LEFT JOIN Test_Cases tc ON s.wrong_test_case_id = tc.id
     WHERE s.id = $1 AND s.user_id = $2
   `
@@ -96,6 +99,8 @@ const getSubmission = async (req, res) => {
     programming_language: submission.programming_language,
     status: submission.status,
     code: submission.code,
+    taskId: submission.task_id,
+    taskTitle: submission.task_title,
     attemptData: attempt
   }
   res.status(200).json(response);

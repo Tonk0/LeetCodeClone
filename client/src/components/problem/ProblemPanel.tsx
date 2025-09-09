@@ -90,19 +90,22 @@ export function ProblemPanel() {
   return (
     <Flex ref={containerRef} w="100vw" height="100vh" alignItems="flex-start" direction={{ lg: 'row', base: 'column' }}>
       <Flex ref={leftContainerRef} w={{ lg: '50%', base: '100%' }} h={{ lg: '100%', base: 'auto' }} minW="3%" direction="column" overflow="hidden">
-        <Flex w="100%" h={isLeftFolded ? '100vh' : '5vh'} writingMode={isLeftFolded ? 'vertical-lr' : 'inherit'} bg={{ base: 'gray.200', _dark: 'gray.800' }} flexShrink="0" align="center" gap="5" padding="5">
-          <Link to="/problems/$id/desc" params={{ id }}>
-            <Flex align="center" gap="2">
-              <LuFileText />
-              Описание
-            </Flex>
-          </Link>
-          <Link to="/problems/$id/submissions" params={{ id }}>
-            <Flex align="center" gap="2">
-              <LuHistory />
-              Попытки
-            </Flex>
-          </Link>
+        <Flex justify="space-between" w="100%" h={isLeftFolded ? '100vh' : '5vh'} writingMode={isLeftFolded ? 'vertical-lr' : 'inherit'} bg={{ base: 'gray.200', _dark: 'gray.800' }} flexShrink="0" align="center" gap="5" padding="5">
+          <Flex gap="5">
+            <Link to="/problems/$id/desc" params={{ id }}>
+              <Flex align="center" gap="2">
+                <LuFileText />
+                Описание
+              </Flex>
+            </Link>
+            <Link to="/problems/$id/submissions" params={{ id }}>
+              <Flex align="center" gap="2">
+                <LuHistory />
+                Попытки
+              </Flex>
+            </Link>
+          </Flex>
+          <Link search={{ page: 1 }} to="/problems">Список задач</Link>
         </Flex>
         <Flex h="100%" overflow="auto" display={isLeftFolded ? 'none' : 'flex'}>
           <div ref={leftContent}>
@@ -158,12 +161,13 @@ export function ProblemPanel() {
             )}
           </Flex>
           <Flex h={{ lg: '100%', base: '100vh' }} overflow="auto" display={isRightFolded ? 'none' : 'flex'}>
-            <Flex w="100%" p="5">
-              <div ref={rightBottomContent} style={{ width: '100%' }}>
+
+            <div ref={rightBottomContent} style={{ width: '100%' }}>
+              <Flex w="100%" p="5">
                 {submitData && showTestResults
                   ? <TestResults attemptResult={submitData} /> : <TestCases />}
-              </div>
-            </Flex>
+              </Flex>
+            </div>
 
           </Flex>
         </Flex>

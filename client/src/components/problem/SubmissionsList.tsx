@@ -38,7 +38,10 @@ export function SubmissionsList({ submissions } : SubmissionsListProps) {
               {submission.programming_language}
             </Text>
             <Text flex="1" textAlign="center">{submission.execution_time}</Text>
-            <Text flex="1" textAlign="center">{submission.memory_used}</Text>
+            <Text flex="1" textAlign="center">
+              {submission.memory_used
+              && `${Math.round((submission.memory_used / 1024 / 1024) * 100) / 100} МБ`}
+            </Text>
           </Flex>
         </Link>
       ))}

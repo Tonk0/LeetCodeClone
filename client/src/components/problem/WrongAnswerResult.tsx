@@ -43,7 +43,7 @@ export function WrongAnswerResult({ wrongAnswerResult }:
         <Text>Вывод</Text>
         <Flex rounded="md" p="4" w="100%" bg={{ base: 'gray.200', _dark: 'gray.800' }}>
           {wrongAnswerResult.userOutput ? (
-            <Text color="red.500">{JSON.stringify(wrongAnswerResult.userOutput)}</Text>
+            <Text color="red.500">{wrongAnswerResult.userOutput}</Text>
           ) : (
             <Text>&nbsp;</Text>
           )}

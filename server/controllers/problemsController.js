@@ -155,7 +155,7 @@ const postSubmission = async (req, res) => {
       )
       RETURNING id
     `
-    const values = [user.id, id, submissionObject.status, submissionObject.memory ?? null, submissionObject.runtime ?? null, code, lang, submissionObject.errorData ?? null, submissionObject.testCase?.id ?? null, submissionObject.userOutput ?? null, submissionObject.userLog ?? null]
+    const values = [user.id, id, submissionObject.status, submissionObject.memory ?? null, submissionObject.runtime ?? null, code, lang, submissionObject.errorData ?? null, submissionObject.testCase?.id ?? null, JSON.stringify(submissionObject.userOutput) ?? null, submissionObject.userLog ?? null]
     const data = (await query(queryString, values)).rows[0];
     return res.status(200).json(submissionObject);
   } catch (err) {
