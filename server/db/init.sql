@@ -61,6 +61,10 @@ CREATE TABLE IF NOT EXISTS Submissions (
     code TEXT NOT NULL,
     programming_language_id INTEGER NOT NULL,
     submitted_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    error_data TEXT,
+    wrong_test_case_id INTEGER,
+    user_output TEXT,
+    user_log  TEXT,
     CONSTRAINT fk_submissions_user FOREIGN KEY (user_id)
         REFERENCES Users(id)
         ON DELETE CASCADE,
@@ -72,7 +76,11 @@ CREATE TABLE IF NOT EXISTS Submissions (
         ON DELETE RESTRICT,
     CONSTRAINT fk_submissions_pl FOREIGN KEY (programming_language_id)
         REFERENCES Programming_Languages(id)
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_submissions_tc FOREIGN KEY (wrong_test_case_id)
+        REFERENCES Test_Cases(id)
         ON DELETE RESTRICT
+    
 );
 
 CREATE TABLE IF NOT EXISTS Task_Templates (
@@ -265,7 +273,7 @@ VALUES
 INSERT INTO Users (email, username, pass_hash)
 VALUES
     ('babaika12@mail.ru', 'Kukyo12', '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2');
-INSERT INTO Submissions (user_id, task_id, status_id, memory_used, execution_time, code, programming_language_id)
+INSERT INTO Submissions (user_id, task_id, status_id, memory_used, execution_time, code, programming_language_id, error_data, wrong_test_case_id, user_output, user_log)
 VALUES
-    (1, 1, 2, 1, 1, 'abc', 1),
-    (1, 1, 1, 1, 1, 'cab', 1);
+    (1, 1, 2, 1, 1, 'abc', 1, null, 1, null, null),
+    (1, 1, 1, 1, 1, 'cab', 1, null, null, null, null);

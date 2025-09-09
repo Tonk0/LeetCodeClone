@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const jwtConfig = require('../jwtConfig');
 
 const register = async (req, res) => {
-  console.log(jwtConfig.JWT_EXPIRES_IN)
   const {login, email, password} = req.body;
   const isLoginExists = (await query('SELECT * FROM Users WHERE username = $1', [login])).rowCount > 0;
   if (isLoginExists) {

@@ -8,7 +8,7 @@ const baseContainerOption = {
     Memory: 64*1024*1024,
   }
 }
-const timeLimitForRuntime = 2500;
+const timeLimitForRuntime = 5500;
 
 // В целом, это ограничивает запуск контейнеров
 const submissionLimiter = rateLimit({

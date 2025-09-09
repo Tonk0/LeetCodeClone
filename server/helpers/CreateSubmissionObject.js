@@ -9,6 +9,7 @@ function createSubmissionObject(testCases, resultObject) {
   const solutionInfo = isSolutionRight(testCases, resultObject.result); // если тесткейс неправильный - вернется инфа и по нему
   if (solutionInfo.isCorrect) {
     return {
+      isError: resultObject.isError,
       status: 'Accepted',
       runtime: resultObject.runtime,
       memory: resultObject.memoryUsage,
@@ -18,6 +19,7 @@ function createSubmissionObject(testCases, resultObject) {
     }
   } else {
     return {
+      isError: resultObject.isError,
       status: 'Wrong Answer',
       ...solutionInfo
     }
@@ -30,6 +32,7 @@ function isSolutionRight(testCases, userResults) {
       return {
         isCorrect: false,
         wrongTestCase: i+1,
+        numOfTestCases: testCases.length,
         testCase: testCases[i],
         userOutput: userResults[i]?.userResult || null,
         userLog: userResults[i]?.userLog || null

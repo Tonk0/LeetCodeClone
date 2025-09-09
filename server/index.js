@@ -6,6 +6,7 @@ const authRoutes = require('./routes/authRoutes')
 const problemsRoutes = require('./routes/problemsRoutes')
 const submissionsRoutes = require('./routes/submissionsRoutes');
 const tagsRoutes = require('./routes/tagsRoutes')
+const testcasesRoutes = require('./routes/testcasesRoutes')
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.json());
@@ -20,6 +21,7 @@ app.use('/auth', authRoutes)
 app.use('/problems', problemsRoutes)
 app.use('/tags', tagsRoutes)
 app.use('/submissions', submissionsRoutes)
+app.use('/testCases', testcasesRoutes)
 app.listen(port || 3000, () => {
   console.log('✅ server is running on ' + port)
 })

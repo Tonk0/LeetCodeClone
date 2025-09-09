@@ -67,10 +67,11 @@ const getSubmissionsForProblem = async (req, res) => {
     return res.status(401).json({message: 'Пользователь не найден'});
   }
   const queryString = `
-    SELECT s.id, memory_used, execution_time, submitted_at, pm.name as programming_language, st.name as status FROM Submissions s
+    SELECT s.id, memory_used, execution_time, submitted_at, code, pm.name as programming_language, st.name as status FROM Submissions s
     LEFT JOIN Programming_Languages pm ON s.programming_language_id = pm.id
     LEFT JOIN Statuses st ON s.status_id = st.id
     WHERE task_id = $1 AND user_id = $2
+    ORDER BY s.submitted_at DESC
   `
   const data = (await query(queryString, [id, user.id])).rows;
   res.status(200).json(data);
@@ -134,28 +135,55 @@ const postSubmission = async (req, res) => {
   }
   const { id } = req.params;
   const {lang, code} = req.body;
-  const queryString = `
-    INSERT INTO Submissions
-      (user_id, task_id, status_id, memory_used, execution_time, code, programming_language_id)
-    VALUES (
-      $1,
-      $2,
-      (SELECT id FROM Statuses WHERE name = $3),
-      $4,
-      $5,
-      $6,
-      (SELECT id FROM Programming_Languages WHERE name = $7)
-    )
-    RETURNING id
-  `
   try {
     const submissionObject = await runContainer(id, lang, code);
-    const values = [user.id, id, submissionObject.status, submissionObject.memory ?? null, submissionObject.runtime ?? null, code, lang]
+    const queryString = `
+      INSERT INTO Submissions
+        (user_id, task_id, status_id, memory_used, execution_time, code, programming_language_id, error_data, wrong_test_case_id, user_output, user_log)
+      VALUES (
+        $1,
+        $2,
+        (SELECT id FROM Statuses WHERE name = $3),
+        $4,
+        $5,
+        $6,
+        (SELECT id FROM Programming_Languages WHERE name = $7),
+        $8,
+        $9,
+        $10,
+        $11
+      )
+      RETURNING id
+    `
+    const values = [user.id, id, submissionObject.status, submissionObject.memory ?? null, submissionObject.runtime ?? null, code, lang, submissionObject.errorData ?? null, submissionObject.testCase?.id ?? null, submissionObject.userOutput ?? null, submissionObject.userLog ?? null]
     const data = (await query(queryString, values)).rows[0];
     return res.status(200).json(submissionObject);
   } catch (err) {
-    return res.status(500).json({message: 'Что-то пошло не так'})
+    console.log(err);
+    return res.status(500).json({message: 'Что-то пошло не так'});
   }
+  // const queryString = `
+  //   INSERT INTO Submissions
+  //     (user_id, task_id, status_id, memory_used, execution_time, code, programming_language_id)
+  //   VALUES (
+  //     $1,
+  //     $2,
+  //     (SELECT id FROM Statuses WHERE name = $3),
+  //     $4,
+  //     $5,
+  //     $6,
+  //     (SELECT id FROM Programming_Languages WHERE name = $7)
+  //   )
+  //   RETURNING id
+  // `
+  // try {
+  //   const submissionObject = await runContainer(id, lang, code);
+  //   const values = [user.id, id, submissionObject.status, submissionObject.memory ?? null, submissionObject.runtime ?? null, code, lang]
+  //   const data = (await query(queryString, values)).rows[0];
+  //   return res.status(200).json(submissionObject);
+  // } catch (err) {
+  //   return res.status(500).json({message: 'Что-то пошло не так'})
+  // }
 }
 
 module.exports = {
