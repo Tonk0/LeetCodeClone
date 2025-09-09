@@ -1,7 +1,7 @@
 import {
   Button, Flex, Heading, Input, Text,
 } from '@chakra-ui/react';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { FormEvent } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Message, sha512 } from 'js-sha512';
@@ -36,6 +36,14 @@ function Login() {
             <PasswordInput name="password" id="password" />
           </Field>
           <Button loading={isPending} type="submit">Войти</Button>
+          <Flex justify="center">
+            <Text>
+              Нет аккаунта? &nbsp;
+            </Text>
+            <Link to="/register">
+              <Text textDecoration="underline">Зарегистрироваться</Text>
+            </Link>
+          </Flex>
           {error && (
             <Text textAlign="center" color="red.400">{error.message}</Text>
           )}

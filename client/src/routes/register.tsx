@@ -2,7 +2,7 @@ import {
   Button, Flex, Heading, Input, Text,
 } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { FormEvent, useState } from 'react';
 import { Message, sha512 } from 'js-sha512';
 import { fetchAuth, RegData } from '@/helpers/api';
@@ -53,6 +53,14 @@ function Register() {
             <PasswordInput name="repeated-password" id="repeated-password" />
           </Field>
           <Button loading={isPending} type="submit" width="100%">Зарегестрироваться</Button>
+          <Flex justify="center">
+            <Text>
+              Уже есть аккаунт? &nbsp;
+            </Text>
+            <Link to="/login">
+              <Text textDecoration="underline">Войти</Text>
+            </Link>
+          </Flex>
           {serverError && (
             <Text textAlign="center" color="red.400">{serverError}</Text>
           )}
