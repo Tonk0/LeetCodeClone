@@ -16,7 +16,7 @@ function RouteComponent() {
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   const problems = Route.useLoaderData();
   return (
-    <Flex gap="5px" width={{ lg: '60%', base: '100%' }} direction="column" align="center" flexGrow="1">
+    <Flex overflow="auto" gap="5px" width={{ lg: '60%', base: '100%' }} direction="column" align="center" flexGrow="1">
       <Tags />
       <ProblemList problems={problems} />
     </Flex>

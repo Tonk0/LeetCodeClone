@@ -2,19 +2,22 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { usePanel } from '@/context/PanelContext';
+import { fetchSubmission } from '@/helpers/api';
+import { SubmissionDetails } from '@/components/problem/SubmissionDetails';
 
 function RouteComponent() {
   const { setRightPanel, leftPanel } = usePanel();
   const { id, submissionId } = Route.useParams();
   const { refresh } = Route.useSearch();
   const navigate = useNavigate();
+  const submission = Route.useLoaderData();
   useEffect(() => {
     if (leftPanel === null) {
       navigate({ to: '/problems/$id/desc', params: { id } });
     }
     sessionStorage.setItem('submissionId', submissionId);
-    setRightPanel(<div>Это детали попытки</div>);
-  }, [setRightPanel, submissionId, id, leftPanel, navigate, refresh]);
+    setRightPanel(<SubmissionDetails submission={submission} />);
+  }, [setRightPanel, submissionId, id, leftPanel, navigate, refresh, submission]);
   return null;
 }
 
@@ -23,4 +26,5 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   validateSearch: (search) => ({ refresh: search.refresh ?? null }),
+  loader: ({ params: { submissionId } }) => fetchSubmission(submissionId),
 });

@@ -5,8 +5,8 @@ import PageSelector from '@/components/PageSelector';
 
 function RouteComponent() {
   return (
-    <Flex width="100vw" height="100vh" justify="center">
-      <Flex width={{ lg: '50vw', base: '60vw' }} height="100vh" align="center" justify="space-between" direction="column" pt="10" pb="10" position="relative" gap="4">
+    <Flex width="100%" height="100vh" justify="center">
+      <Flex width={{ lg: '50vw', base: '60vw' }} height="100%" align="center" justify="space-between" direction="column" pt="10" pb="10" position="relative" gap="4">
         <Navbar />
         <Outlet />
         {/* page selector */}

@@ -8,7 +8,7 @@ interface ProblemListProps {
 }
 function ProblemList({ problems }: ProblemListProps) {
   return (
-    <Flex width="100%" direction="column" align="center">
+    <Flex width="100%" direction="column" align="center" overflow="auto">
       {problems.map((problem, index) => (
         <Link to="/problems/$id" params={{ id: problem.id.toString() }} style={{ width: '100%' }} key={problem.id}>
           <Flex height="10" width="100%" align="center" justify="center" gap="2" backgroundColor={index % 2 === 0 ? 'tile-bg' : ''}>

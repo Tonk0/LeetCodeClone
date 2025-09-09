@@ -35,6 +35,9 @@ export interface SubmissionsQuery {
   page: number;
   statuses: string | undefined;
 }
+export interface SubmissionPageQuery {
+  statuses?: string | undefined;
+}
 export interface Submission {
   id: number;
   status: string;
@@ -53,6 +56,49 @@ export interface SubmissionForProblem {
 export interface Tag {
   id: number,
   name: string,
+}
+
+export interface TestCase {
+  id: number,
+  task_id: number,
+  input: Record<string, unknown>
+  expected_output: unknown
+}
+
+export interface ErrorAttempt {
+  isError: true,
+  status: string,
+  errorData?: string
+}
+export interface CorrectAttempt {
+  isError: false,
+  isCorrect: true,
+  status: string,
+  numOfTestCases: number,
+  runtime: number,
+  memory: number,
+  // cpu: number,
+}
+export interface WrongAnswerAttempt {
+  isError: false,
+  isCorrect: false,
+  status: string,
+  numOfTestCases: number,
+  wrongTestCase: number,
+  testCase: TestCase,
+  userOutput: string | null,
+  userLog: []
+}
+
+export type AttemptResult = ErrorAttempt | CorrectAttempt | WrongAnswerAttempt;
+
+export interface SubmissionDetails {
+  id: number;
+  submitted_at: string;
+  programming_language: string;
+  status: string;
+  attemptData: AttemptResult
+  code: string
 }
 /* AUTH HANDLERS */
 export const fetchAuth = async <T>(endpoint: string, data: T) => {
@@ -172,7 +218,8 @@ Promise<{ template: string }> => {
   return response.json();
 };
 
-export const sendUserCode = async (id:string, lang: string, code: string) => {
+export const sendUserCode = async (id:string, lang: string, code: string):
+Promise<AttemptResult> => {
   const response = await fetch(`${import.meta.env.VITE_BASE_URL}/problems/${id}/sendCode`, {
     method: 'POST',
     headers: {
@@ -214,10 +261,57 @@ export const fetchSubmissions = async (query: SubmissionsQuery): Promise<Submiss
   return response.json();
 };
 
+export const fetchSubmission = async (submissionId: string): Promise<SubmissionDetails> => {
+  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/submissions/${submissionId}`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({ message: 'Неизвестная ошибка' }));
+    throw new Error(errData.message);
+  }
+  return response.json();
+};
+
+export const fetchPagesForSubmissions = async (query: SubmissionPageQuery):
+Promise<{ numOfPages: number }> => {
+  const { statuses } = query;
+  let queryString = '';
+  if (statuses) {
+    queryString += `&status=${encodeURIComponent(statuses)}`;
+  }
+  queryString = queryString.replace('&', '?');
+
+  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/submissions/pageCount${queryString}`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({ message: 'Неизвестная ошибка' }));
+    throw new Error(errData.message);
+  }
+  return response.json();
+};
+
 /* TAGS HANDLERS */
 
 export const fetchTags = async (): Promise<Tag[]> => {
   const response = await fetch(`${import.meta.env.VITE_BASE_URL}/tags`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({ message: 'Неизвестная ошибка' }));
+    throw new Error(errData.message);
+  }
+  return response.json();
+};
+/* TESTCASES HANDLERS */
+
+export const fetchFirstThreeTestCases = async (problemId: string): Promise<TestCase[]> => {
+  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/testCases/firstThreeTestCases/${problemId}`, {
     method: 'GET',
     credentials: 'include',
   });

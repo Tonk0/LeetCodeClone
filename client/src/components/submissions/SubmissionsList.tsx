@@ -8,7 +8,7 @@ interface SubmissionsListProps {
 }
 export function SubmissionsList({ submissions }: SubmissionsListProps) {
   return (
-    <Flex width="100%" direction="column" align="center">
+    <Flex width="100%" direction="column" align="center" overflow="auto">
       {submissions.map((submission, index) => (
         <Link to="/submissions/$id" params={{ id: submission.id.toString() }} style={{ width: '100%' }} key={submission.id}>
           <Flex height="10" width="100%" align="center" justify="center" gap="2" backgroundColor={index % 2 === 0 ? 'tile-bg' : ''}>

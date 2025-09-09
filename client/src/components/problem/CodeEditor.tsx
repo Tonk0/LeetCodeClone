@@ -4,7 +4,7 @@ import {
 import { Editor, Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { useTheme } from 'next-themes';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { FormEvent, useRef, useState } from 'react';
 import {
@@ -15,9 +15,9 @@ import { toaster } from '@/components/ui/toaster';
 
 const frameworks = createListCollection({
   items: [
-    { label: 'C++', value: 'C++' },
-    { label: 'Python', value: 'Python' },
-    { label: 'Java Script', value: 'Java Script' },
+    { label: 'C++', value: 'C++', editorName: 'cpp' },
+    { label: 'Python', value: 'Python', editorName: 'python' },
+    { label: 'Java Script', value: 'Java Script', editorName: 'javascript' },
   ],
 });
 
@@ -28,6 +28,7 @@ const editorOptions: editor.IStandaloneEditorConstructionOptions = {
 };
 export function CodeEditor() {
   const theme = useTheme();
+  const queryClient = useQueryClient();
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const { id } = useParams({ from: '/problems/$id' });
   const handleBeforeMount = (monaco: Monaco) => {
@@ -44,6 +45,9 @@ export function CodeEditor() {
     editorRef.current = editorInstance;
   };
   const [language, setLanguage] = useState<string[]>([sessionStorage.getItem('lang') || 'Java Script']);
+  const [editorLanguage, setEditorLanguage] = useState<string>(
+    frameworks.items.find((el) => el.value === sessionStorage.getItem('lang'))?.editorName || 'javascript',
+  );
   const { data } = useQuery({
     queryKey: ['template', language],
     queryFn: ({ queryKey }) => fetchTemplate(id, queryKey[1][0]),
@@ -58,9 +62,14 @@ export function CodeEditor() {
         });
       }
     },
+    mutationKey: ['submit'],
+    onSuccess: (newData) => {
+      queryClient.setQueryData(['submit'], newData);
+    },
   });
   const handleChange = (e: string[]) => {
     setLanguage(e);
+    setEditorLanguage(frameworks.items.find((el) => el.value === e.join())?.editorName || 'markdown'); // markdown, чтобы не подсвечивались ошибки синтаксиса
     sessionStorage.setItem('lang', e[0]);
   };
 
@@ -92,7 +101,7 @@ export function CodeEditor() {
         {/* пришлось сделать так, ибо иногда,
         после перезагрузки страницы, template не показывался */
       data && (
-        <Editor width="100%" value={data.template} language="markdown" onMount={handleEditorDidMount} beforeMount={handleBeforeMount} theme={theme.theme === 'dark' ? 'customDarkTheme' : 'vs'} options={editorOptions} />
+        <Editor width="100%" value={data.template} language={editorLanguage} onMount={handleEditorDidMount} beforeMount={handleBeforeMount} theme={theme.theme === 'dark' ? 'customDarkTheme' : 'vs'} options={editorOptions} />
       )
       }
       </Flex>

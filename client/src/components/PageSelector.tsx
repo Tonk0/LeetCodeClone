@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
   PaginationItems, PaginationNextTrigger, PaginationPrevTrigger, PaginationRoot,
 } from './ui/pagination';
-import { fetchPagesForProblems } from '@/helpers/api';
+import { fetchPagesForProblems, fetchPagesForSubmissions } from '@/helpers/api';
 
 function PageSelector() {
   const router = useRouterState();
@@ -20,7 +20,7 @@ function PageSelector() {
       if (router.location.pathname === '/problems') {
         return fetchPagesForProblems(router.location.search);
       }
-      return { numOfPages: 1 };
+      return fetchPagesForSubmissions(router.location.search);
     },
   });
 
