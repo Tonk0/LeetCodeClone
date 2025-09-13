@@ -30,12 +30,11 @@ export function WrongAnswerResult({ wrongAnswerResult }:
       {wrongAnswerResult.userLog.length > 0 && (
       <Flex gap="2" direction="column">
         <Text>Stdout</Text>
-        <Flex overflow="auto" maxHeight="30vh" rounded="md" p="4" w="100%" bg={{ base: 'gray.200', _dark: 'gray.800' }}>
-          <Text>
-            {wrongAnswerResult.userLog.map((line) => (
-              <Text key={line}>{line}</Text>
-            ))}
-          </Text>
+        <Flex direction="column" overflow="auto" maxHeight="30vh" rounded="md" p="4" w="100%" bg={{ base: 'gray.200', _dark: 'gray.800' }}>
+          {wrongAnswerResult.userLog.map((line, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <Text key={`${line}_${index}`}>{line}</Text>
+          ))}
         </Flex>
       </Flex>
       )}
